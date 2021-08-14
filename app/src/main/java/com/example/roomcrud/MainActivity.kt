@@ -1,12 +1,15 @@
 package com.example.roomcrud
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,6 +30,7 @@ class MainActivity : ComponentActivity() {
 fun RoomCrudApp() {
     val navController = rememberNavController()
     var canPop by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     var appTitle by remember { mutableStateOf("") }
 
@@ -47,6 +51,18 @@ fun RoomCrudApp() {
 
     Scaffold(
         topBar = { TopAppBar(title = { Text(appTitle) }, navigationIcon = navigationIcon) },
+        floatingActionButtonPosition = FabPosition.End,
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                Toast.makeText(
+                    context,
+                    "Navigating to the Add screen ...",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }) {
+                Icon(imageVector = Icons.Filled.Add, contentDescription = "Add Item")
+            }
+        },
         content = {
             NavHost(navController = navController, startDestination = "home") {
                 composable("home") { HomeScreen(navController, appTitle = { appTitle = it }) }
