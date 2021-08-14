@@ -1,5 +1,5 @@
 # Compose Exercise: Room CRUD
-Exercise project to implement CRUD operatoin in a Room database with Jetpack Compose.
+Exercise project to implement CRUD operation in a Room database with Jetpack Compose.
 
 ## Dependency
 ```
