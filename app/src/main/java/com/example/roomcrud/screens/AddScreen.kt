@@ -36,7 +36,6 @@ fun AddScreen(
             .padding(horizontal = 32.dp, vertical = 16.dp)
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        //verticalArrangement = Arrangement.Center
     ) {
         OutlinedTextField(
             value = itemName,
@@ -68,7 +67,6 @@ fun AddScreen(
         Button(
             onClick = {
                 if (itemViewModel.isItemValid(itemName, itemPrice, itemQuantity)) {
-                    //Log.d("AddScreen", itemName.trim() + " " + (itemPrice.trim().toDoubleOrNull()) + " " + itemQuantity.trim().toIntOrNull())
                     itemViewModel.addItem(
                         Item(
                             0,
@@ -77,7 +75,9 @@ fun AddScreen(
                             itemQuantity.trim().toInt()
                         )
                     )
-                    navController.navigate("home")
+                    navController.navigate("home") {
+                        popUpTo("home") { inclusive = true }
+                    }
                 }
             }, modifier = Modifier
                 .padding(top = 16.dp)
