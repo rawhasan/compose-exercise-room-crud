@@ -8,10 +8,8 @@ import kotlinx.coroutines.flow.Flow
 class ItemRepository(private val itemDao: ItemDao) {
     val allItems: Flow<List<Item>> = itemDao.getAllItems()
 
-    @Suppress("RedundantSuppressModifier")
-    @WorkerThread
-    suspend fun getItem(id: Int) {
-        itemDao.getItem(id)
+    fun getItem(id: Int): Flow<Item> {
+        return itemDao.getItem(id)
     }
 
     @Suppress("RedundantSuppressModifier")

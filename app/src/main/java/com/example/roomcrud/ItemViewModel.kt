@@ -7,9 +7,7 @@ import kotlinx.coroutines.launch
 class ItemViewModel(private val repository: ItemRepository): ViewModel() {
     val allItems: LiveData<List<Item>> = repository.allItems.asLiveData()
 
-    fun getItem(id: Int) = viewModelScope.launch {
-        repository.getItem(id)
-    }
+    fun getItem(id: Int): LiveData<Item> = repository.getItem(id).asLiveData()
 
     fun addItem(item: Item) = viewModelScope.launch {
         repository.insertItem(item)
