@@ -10,14 +10,16 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.roomcrud.ItemViewModel
+import com.example.roomcrud.data.Item
 
 @Composable
 fun AddScreen(
     navController: NavController,
+    itemViewModel: ItemViewModel,
     onSetAppTitle: (String) -> Unit,
     onShowFab: (Boolean) -> Unit
 ) {
@@ -41,32 +43,59 @@ fun AddScreen(
             value = itemName,
             onValueChange = { itemName = it },
             label = { Text("Item name") },
-            modifier = Modifier.padding(top = 16.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .fillMaxWidth()
         )
 
         OutlinedTextField(
             value = itemPrice,
             onValueChange = { itemPrice = it },
             label = { Text("Item price") },
-            modifier = Modifier.padding(top = 16.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .fillMaxWidth()
         )
 
         OutlinedTextField(
             value = itemQuantity,
             onValueChange = { itemQuantity = it },
             label = { Text("Item quantity") },
-            modifier = Modifier.padding(top = 16.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .fillMaxWidth()
         )
-        
-        Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(top = 16.dp).fillMaxWidth()) {
+
+        Button(
+            onClick = {
+                if (itemViewModel.isItemValid(itemName, itemPrice, itemQuantity)) {
+                    //Log.d("AddScreen", itemName.trim() + " " + (itemPrice.trim().toDoubleOrNull()) + " " + itemQuantity.trim().toIntOrNull())
+                    itemViewModel.addItem(
+                        Item(
+                            0,
+                            itemName.trim(),
+                            itemPrice.trim().toDouble(),
+                            itemQuantity.trim().toInt()
+                        )
+                    )
+                    navController.navigate("home")
+                }
+            }, modifier = Modifier
+                .padding(top = 16.dp)
+                .fillMaxWidth()
+        ) {
             Text(text = "Add item")
         }
     }
+}
+
+fun isItemValid() {
+
 }
 
 
 @Preview(showBackground = true)
 @Composable
 fun AddScreenPreview() {
-    AddScreen(navController = NavController(LocalContext.current), {}, {})
+    //AddScreen(navController = NavController(LocalContext.current), {}, {})
 }

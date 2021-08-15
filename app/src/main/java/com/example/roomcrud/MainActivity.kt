@@ -4,13 +4,12 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -21,17 +20,21 @@ import com.example.roomcrud.screens.HomeScreen
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val itemViewModel by viewModels<ItemViewModel> {
+            ItemViewModelFactory((application as ItemApplication).repository)
+        }
+
         setContent {
-            RoomCrudApp()
+            RoomCrudApp(itemViewModel)
         }
     }
 }
 
 @Composable
-fun RoomCrudApp() {
+fun RoomCrudApp(itemViewModel: ItemViewModel) {
     val navController = rememberNavController()
     var canPop by remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
     var appTitle by remember { mutableStateOf("") }
     var showFab by remember { mutableStateOf(false) }
@@ -79,16 +82,12 @@ fun RoomCrudApp() {
                 composable("add") {
                     AddScreen(
                         navController,
+                        itemViewModel,
                         onSetAppTitle = { appTitle = it },
-                        onShowFab = { showFab = it })
+                        onShowFab = { showFab = it },
+                    )
                 }
             }
         }
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    RoomCrudApp()
 }
