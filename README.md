@@ -1,5 +1,7 @@
 # Compose Exercise: Room CRUD
-Exercise project to implement CRUD operation in a Room database with Jetpack Compose.
+- Scaffold with TopAppBar and FAB.
+- Set title dynamically from different screens by raising event.
+- Turn on/off FAB in different screens by raising event.
 
 ## Dependency
 ```

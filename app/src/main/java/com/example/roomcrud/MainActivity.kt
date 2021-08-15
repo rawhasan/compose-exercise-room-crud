@@ -1,6 +1,7 @@
 package com.example.roomcrud
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -33,6 +34,7 @@ fun RoomCrudApp() {
     val context = LocalContext.current
 
     var appTitle by remember { mutableStateOf("") }
+    var showFab by remember { mutableStateOf(false) }
 
     navController.addOnDestinationChangedListener { controller, _, _ ->
         canPop = controller.previousBackStackEntry != null
@@ -53,20 +55,35 @@ fun RoomCrudApp() {
         topBar = { TopAppBar(title = { Text(appTitle) }, navigationIcon = navigationIcon) },
         floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                Toast.makeText(
-                    context,
-                    "Navigating to the Add screen ...",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = "Add Item")
+            if (showFab) { // display FAB based on the even from screens
+                FloatingActionButton(onClick = {
+                    Toast.makeText(
+                        context,
+                        "Navigating to the Add screen ...",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }) {
+                    Icon(imageVector = Icons.Filled.Add, contentDescription = "Add Item")
+                }
+
+                Log.d("MainActivityScreen", "FAB set to show.")
             }
         },
         content = {
             NavHost(navController = navController, startDestination = "home") {
-                composable("home") { HomeScreen(navController, appTitle = { appTitle = it }) }
-                composable("details") { DetailsScreen(navController, appTitle = { appTitle = it }) }
+                composable("home") {
+                    HomeScreen(
+                        navController,
+                        onSetAppTitle = { appTitle = it },
+                        onShowFab = { showFab = it }
+                    )
+                }
+                composable("details") {
+                    DetailsScreen(
+                        navController,
+                        onSetAppTitle = { appTitle = it },
+                        onShowFab = { showFab = it })
+                }
             }
         }
     )
