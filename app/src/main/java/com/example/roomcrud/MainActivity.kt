@@ -70,6 +70,7 @@ fun RoomCrudApp(itemViewModel: ItemViewModel) {
                 composable("home") {
                     HomeScreen(
                         navController,
+                        itemViewModel,
                         onSetAppTitle = { appTitle = it },
                         onShowFab = { showFab = it })
                 }
