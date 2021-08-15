@@ -38,12 +38,14 @@ class ItemRoomDatabaseTest {
 
     @Test
     @Throws(Exception::class)
-    fun insertAndGetItem() = runBlocking {
-        val item = Item(0, "Mango", 2.00, 8)
-        itemDao.insert(item)
+    fun insertAndGetItem() {
+        runBlocking {
+            val item = Item(0, "Mango", 2.00, 8)
+            itemDao.insert(item)
 
-//        itemDao.getItem(0).collect {
-//            assertEquals(it.itemName, "Mango")
-//        }
+//            itemDao.getItem(0).collect { item ->
+//                assertEquals(item.itemName, "Mango")
+//            }
+        }
     }
 }

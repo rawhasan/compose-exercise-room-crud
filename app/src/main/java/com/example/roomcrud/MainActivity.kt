@@ -2,7 +2,6 @@ package com.example.roomcrud
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.*
@@ -15,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.roomcrud.screens.AddScreen
 import com.example.roomcrud.screens.DetailsScreen
 import com.example.roomcrud.screens.HomeScreen
 
@@ -56,16 +56,9 @@ fun RoomCrudApp() {
         floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = {
             if (showFab) { // display FAB based on the even from screens
-                FloatingActionButton(onClick = {
-                    Toast.makeText(
-                        context,
-                        "Navigating to the Add screen ...",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }) {
+                FloatingActionButton(onClick = { navController.navigate("add") }) {
                     Icon(imageVector = Icons.Filled.Add, contentDescription = "Add Item")
                 }
-
                 Log.d("MainActivityScreen", "FAB set to show.")
             }
         },
@@ -75,11 +68,16 @@ fun RoomCrudApp() {
                     HomeScreen(
                         navController,
                         onSetAppTitle = { appTitle = it },
-                        onShowFab = { showFab = it }
-                    )
+                        onShowFab = { showFab = it })
                 }
                 composable("details") {
                     DetailsScreen(
+                        navController,
+                        onSetAppTitle = { appTitle = it },
+                        onShowFab = { showFab = it })
+                }
+                composable("add") {
+                    AddScreen(
                         navController,
                         onSetAppTitle = { appTitle = it },
                         onShowFab = { showFab = it })
