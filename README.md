@@ -2,6 +2,7 @@
 - Scaffold with TopAppBar and FAB.
 - Set title dynamically from different screens by raising event.
 - Turn on/off FAB in different screens by raising event.
+- Show alert dialog to confirm an action.
 
 ## Dependency
 ```kt

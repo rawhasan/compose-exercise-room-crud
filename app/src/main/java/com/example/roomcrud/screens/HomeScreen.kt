@@ -52,7 +52,6 @@ fun HomeScreen(
             items(items) { item ->
                 ItemLayout(item, navController)
             }
-
         }
     }
 }
@@ -105,7 +104,7 @@ fun ItemLayout(item: Item, navController: NavController) {
     ) {
         Text(item.itemName, modifier = Modifier.weight(1f), color = Color.White)
         Text(
-            "$ ${item.itemPrice.toString()}",
+            "$ ${item.itemPrice}",
             modifier = Modifier
                 .width(100.dp)
                 .padding(horizontal = 16.dp),
