@@ -2,6 +2,7 @@ package com.example.roomcrud.screens
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -49,13 +50,14 @@ fun HomeScreen(
             item { ItemHeaderLayout() }
 
             items(items) { item ->
-                ItemLayout(item)
+                ItemLayout(item, navController)
             }
 
         }
     }
 }
 
+// Header inside the LazyColumn
 @Composable
 fun ItemHeaderLayout() {
     Row(
@@ -90,17 +92,20 @@ fun ItemHeaderLayout() {
     }
 }
 
+// Layout of a single item row in the LazyColumn
 @Composable
-fun ItemLayout(item: Item) {
+fun ItemLayout(item: Item, navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colors.primaryVariant)
             .padding(vertical = 8.dp, horizontal = 16.dp)
+            .clickable { navController.navigate("details/${item.id}") }
+
     ) {
         Text(item.itemName, modifier = Modifier.weight(1f), color = Color.White)
         Text(
-            "$${item.itemPrice.toString()}",
+            "$ ${item.itemPrice.toString()}",
             modifier = Modifier
                 .width(100.dp)
                 .padding(horizontal = 16.dp),

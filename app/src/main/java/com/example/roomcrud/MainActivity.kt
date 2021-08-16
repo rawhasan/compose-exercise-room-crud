@@ -74,11 +74,13 @@ fun RoomCrudApp(itemViewModel: ItemViewModel) {
                         onSetAppTitle = { appTitle = it },
                         onShowFab = { showFab = it })
                 }
-                composable("details") {
+                composable("details/{itemId}") { backStackEntry ->
                     DetailsScreen(
+                        backStackEntry.arguments?.getString("itemId"),
                         navController,
-                        onSetAppTitle = { appTitle = it },
-                        onShowFab = { showFab = it })
+                        itemViewModel,
+                        onSetAppTitle = { appTitle = it }
+                    ) { showFab = it }
                 }
                 composable("add") {
                     AddScreen(
