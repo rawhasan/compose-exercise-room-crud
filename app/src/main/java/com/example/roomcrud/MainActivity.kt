@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.roomcrud.screens.AddScreen
 import com.example.roomcrud.screens.DetailsScreen
+import com.example.roomcrud.screens.EditScreen
 import com.example.roomcrud.screens.HomeScreen
 
 class MainActivity : ComponentActivity() {
@@ -89,6 +90,14 @@ fun RoomCrudApp(itemViewModel: ItemViewModel) {
                         onSetAppTitle = { appTitle = it },
                         onShowFab = { showFab = it },
                     )
+                }
+                composable("edit/{itemId}") { backStackEntry ->
+                    EditScreen(
+                        backStackEntry.arguments?.getString("itemId"),
+                        navController,
+                        itemViewModel,
+                        onSetAppTitle = { appTitle = it }
+                    ) { showFab = it }
                 }
             }
         }

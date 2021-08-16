@@ -2,19 +2,19 @@ package com.example.roomcrud.screens
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -39,6 +39,9 @@ fun DetailsScreen(
     val receivedItem = itemViewModel.getItem(itemId!!.toInt()).observeAsState()
     val item = receivedItem.value ?: Item(0, "", 0.0, 0)
 
+    var showSellForm by remember { mutableStateOf(false) }
+    var sellQuantity by remember { mutableStateOf("") }
+
     val showDialog = remember { mutableStateOf(false) }
     val deleteConfirmed = remember { mutableStateOf(false) }
 
@@ -49,7 +52,8 @@ fun DetailsScreen(
             onResponse = {
                 deleteConfirmed.value = it
                 showDialog.value = false
-            })
+            }
+        )
     }
 
     if (deleteConfirmed.value) { // Delete item only if confirmed by the user
@@ -85,8 +89,10 @@ fun DetailsScreen(
 
         // Sell Button
         Button(
-            onClick = { },
-            modifier = Modifier.fillMaxWidth()
+            onClick = { showSellForm = true },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
         ) {
             Icon(
                 imageVector = Icons.Filled.ShoppingCart,
@@ -97,10 +103,40 @@ fun DetailsScreen(
             Text(text = "Sell", modifier = Modifier.padding(start = 8.dp))
         }
 
+        // Sell form
+        if (showSellForm) {
+            Row(verticalAlignment = Alignment.Bottom) {
+                TextField(
+                    value = sellQuantity,
+                    onValueChange = { sellQuantity = it },
+                    label = { Text("Sell Quantity") },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 16.dp),
+                    colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White), // TextField background color
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number) // Numeric keyboard
+                )
+
+                Button(onClick = { showSellForm = false }) {
+                    Icon(
+                        imageVector = Icons.Filled.Done,
+                        contentDescription = "Sell Item",
+                        tint = Color.White
+                    )
+                }
+            }
+        }
+
         Spacer(modifier = Modifier.weight(1f))
 
         // Edit Button
-        Button(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
+        Button(
+            onClick = {
+                Log.d("DetailsScreen", "Passing item id to edit: ${item.id}")
+                navController.navigate("edit/${item.id}")
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Icon(
                 imageVector = Icons.Filled.Edit,
                 contentDescription = null,
