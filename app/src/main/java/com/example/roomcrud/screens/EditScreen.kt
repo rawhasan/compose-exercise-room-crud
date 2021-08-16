@@ -32,8 +32,8 @@ fun EditScreen(
 
     Log.d("EditScreen", "Item id: $itemId")
 
-    val receivedItem = itemViewModel.getItem(itemId!!.toInt()).observeAsState()
-    val item = receivedItem.value ?: Item(0, "", 0.0, 0)
+    val receivedItem by itemViewModel.getItem(itemId!!.toInt()).observeAsState()
+    val item = receivedItem ?: Item(0, "", 0.0, 0)
 
     Log.d("EditScreen", "Editing item: $item")
 
@@ -41,9 +41,9 @@ fun EditScreen(
 //    var itemPrice by remember { mutableStateOf("") }
 //    var itemQuantity by remember { mutableStateOf("") }
 
-    var itemName by remember { mutableStateOf(receivedItem.value?.itemName ?: " ") }
-    var itemPrice by remember { mutableStateOf(receivedItem.value?.itemPrice.toString() ?: " ") }
-    var itemQuantity by remember { mutableStateOf(receivedItem.value?.quantityInStock.toString() ?: " ") }
+    var itemName by remember { mutableStateOf(item.itemName) }
+    var itemPrice by remember { mutableStateOf(item.itemPrice.toString()) }
+    var itemQuantity by remember { mutableStateOf(item.quantityInStock.toString()) }
 
 //    itemName = item.itemName
 //    itemPrice = item.itemPrice.toString()
