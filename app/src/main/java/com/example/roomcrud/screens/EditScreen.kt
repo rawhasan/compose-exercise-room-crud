@@ -32,24 +32,27 @@ fun EditScreen(
 
     Log.d("EditScreen", "Item id: $itemId")
 
-    val receivedItem by itemViewModel.getItem(itemId!!.toInt()).observeAsState()
-    val item = receivedItem ?: Item(0, "", 0.0, 0)
+    val receivedItem: Item by itemViewModel.getItem(itemId!!.toInt())
+        .observeAsState(Item(0, "", 0.0, 0))
 
-    Log.d("EditScreen", "Editing item: $item")
+    Log.d("EditScreen", "receivedItem: $receivedItem")
 
-//    var itemName by remember { mutableStateOf("") }
-//    var itemPrice by remember { mutableStateOf("") }
-//    var itemQuantity by remember { mutableStateOf("") }
+    var itemName by remember { mutableStateOf(receivedItem.itemName) }
+    var itemPrice by remember { mutableStateOf(receivedItem.itemPrice.toString()) }
+    var itemQuantity by remember { mutableStateOf(receivedItem.quantityInStock.toString()) }
 
-    var itemName by remember { mutableStateOf(item.itemName) }
-    var itemPrice by remember { mutableStateOf(item.itemPrice.toString()) }
-    var itemQuantity by remember { mutableStateOf(item.quantityInStock.toString()) }
+    if (receivedItem.id != 0) {
+        LaunchedEffect(Unit) {
+            itemName = receivedItem.itemName
+            itemPrice = receivedItem.itemPrice.toString()
+            itemQuantity = receivedItem.quantityInStock.toString()
+        }
+    }
 
-//    itemName = item.itemName
-//    itemPrice = item.itemPrice.toString()
-//    itemQuantity = item.quantityInStock.toString()
-
-    Log.d("EditScreen", "Editing values: $itemName $itemPrice $itemQuantity")
+    Log.d(
+        "EditScreen",
+        "Editing values: itemName - $itemName,  itemPrice - $itemPrice, itemQuantity - $itemQuantity"
+    )
 
     Column(
         modifier = Modifier
@@ -87,14 +90,12 @@ fun EditScreen(
         Button(
             onClick = {
                 if (itemViewModel.isItemValid(itemName, itemPrice, itemQuantity)) {
-                    itemViewModel.updateItem(
-                        Item(
-                            0,
-                            itemName.trim(),
-                            itemPrice.trim().toDouble(),
-                            itemQuantity.trim().toInt()
-                        )
+                    var updatedItem = receivedItem.copy(
+                        itemName = itemName.trim(),
+                        itemPrice = itemPrice.trim().toDouble(),
+                        quantityInStock = itemQuantity.trim().toInt()
                     )
+                    itemViewModel.updateItem(updatedItem)
                     navController.navigate("home") {
                         popUpTo("home") { inclusive = true }
                     }
