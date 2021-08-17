@@ -1,6 +1,5 @@
 package com.example.roomcrud.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -28,12 +27,12 @@ fun DetailsScreen(
     itemViewModel: ItemViewModel,
     onSetAppTitle: (String) -> Unit,
     onShowFab: (Boolean) -> Unit,
+    onItemDeleted: (Item) -> Unit
 ) {
     // set the events only once during recompositions
     LaunchedEffect(Unit) {
         onSetAppTitle("Item Details")
         onShowFab(false)
-        Log.d("DetailsScreen", "Title & FAB events set.")
     }
 
     val receivedItem = itemViewModel.getItem(itemId!!.toInt()).observeAsState()
@@ -56,19 +55,19 @@ fun DetailsScreen(
         )
     }
 
-    if (deleteConfirmed.value) { // Delete item only if confirmed by the user
-        Log.d("DetailsScreen", "Deleting item: $item")
+    // Delete item only if confirmed by the user
+    if (deleteConfirmed.value) {
 
-        itemViewModel.deleteItem(item)
+        // raise event to delete the item by the caller function
+        onItemDeleted(item)
+
         navController.navigate("home") {
             popUpTo("home") { inclusive = true }
         }
 
+        // resetting the user confirmation from the alert dialog
         deleteConfirmed.value = false
-    } else {
-        Log.d("DetailsScreen", "Not deleting item: $item")
     }
-
 
     Column(
         modifier = Modifier
@@ -131,10 +130,7 @@ fun DetailsScreen(
 
         // Edit Button
         Button(
-            onClick = {
-                Log.d("DetailsScreen", "Passing item id to edit: ${item.id}")
-                navController.navigate("edit/${item.id}")
-            },
+            onClick = { navController.navigate("edit/${item.id}") },
             modifier = Modifier.fillMaxWidth()
         ) {
             Icon(

@@ -20,7 +20,8 @@ fun AddScreen(
     navController: NavController,
     itemViewModel: ItemViewModel,
     onSetAppTitle: (String) -> Unit,
-    onShowFab: (Boolean) -> Unit
+    onShowFab: (Boolean) -> Unit,
+    onItemAdded: (Item) -> Unit
 ) {
     var itemName by remember { mutableStateOf("") }
     var itemPrice by remember { mutableStateOf("") }
@@ -64,10 +65,14 @@ fun AddScreen(
                 .fillMaxWidth()
         )
 
+        // Add Button
         Button(
             onClick = {
                 if (itemViewModel.isItemValid(itemName, itemPrice, itemQuantity)) {
-                    itemViewModel.addItem(
+//                    itemViewModel.addItem(
+//                        Item(0, itemName.trim(), itemPrice.trim().toDouble(), itemQuantity.trim().toInt())
+//                    )
+                    onItemAdded(
                         Item(
                             0,
                             itemName.trim(),

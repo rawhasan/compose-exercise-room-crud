@@ -1,7 +1,6 @@
 package com.example.roomcrud
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -13,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.roomcrud.data.Item
 import com.example.roomcrud.screens.AddScreen
 import com.example.roomcrud.screens.DetailsScreen
 import com.example.roomcrud.screens.EditScreen
@@ -27,13 +27,25 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            RoomCrudApp(itemViewModel)
+            RoomCrudApp(
+                itemViewModel,
+                onAddItem = { itemViewModel.addItem(it) },
+                onEditItem = { itemViewModel.updateItem(it) },
+                onDeleteItem = { itemViewModel.deleteItem(it) })
         }
     }
 }
 
+/***************
+ * App Entrance
+ ***************/
 @Composable
-fun RoomCrudApp(itemViewModel: ItemViewModel) {
+fun RoomCrudApp(
+    itemViewModel: ItemViewModel,
+    onAddItem: (Item) -> Unit,
+    onEditItem: (Item) -> Unit,
+    onDeleteItem: (Item) -> Unit
+) {
     val navController = rememberNavController()
     var canPop by remember { mutableStateOf(false) }
 
@@ -63,7 +75,6 @@ fun RoomCrudApp(itemViewModel: ItemViewModel) {
                 FloatingActionButton(onClick = { navController.navigate("add") }) {
                     Icon(imageVector = Icons.Filled.Add, contentDescription = "Add Item")
                 }
-                Log.d("MainActivityScreen", "FAB set to show.")
             }
         },
         content = {
@@ -73,15 +84,18 @@ fun RoomCrudApp(itemViewModel: ItemViewModel) {
                         navController,
                         itemViewModel,
                         onSetAppTitle = { appTitle = it },
-                        onShowFab = { showFab = it })
+                        onShowFab = { showFab = it }
+                    )
                 }
                 composable("details/{itemId}") { backStackEntry ->
                     DetailsScreen(
                         backStackEntry.arguments?.getString("itemId"),
                         navController,
                         itemViewModel,
-                        onSetAppTitle = { appTitle = it }
-                    ) { showFab = it }
+                        onSetAppTitle = { appTitle = it },
+                        onShowFab = { showFab = it },
+                        onItemDeleted = { onDeleteItem(it) }
+                    )
                 }
                 composable("add") {
                     AddScreen(
@@ -89,6 +103,7 @@ fun RoomCrudApp(itemViewModel: ItemViewModel) {
                         itemViewModel,
                         onSetAppTitle = { appTitle = it },
                         onShowFab = { showFab = it },
+                        onItemAdded = { onAddItem(it) }
                     )
                 }
                 composable("edit/{itemId}") { backStackEntry ->
@@ -96,8 +111,10 @@ fun RoomCrudApp(itemViewModel: ItemViewModel) {
                         backStackEntry.arguments?.getString("itemId"),
                         navController,
                         itemViewModel,
-                        onSetAppTitle = { appTitle = it }
-                    ) { showFab = it }
+                        onSetAppTitle = { appTitle = it },
+                        onShowFab = { showFab = it },
+                        onItemEdited = { onEditItem(it) }
+                    )
                 }
             }
         }

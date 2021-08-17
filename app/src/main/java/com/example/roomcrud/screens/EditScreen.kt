@@ -1,6 +1,5 @@
 package com.example.roomcrud.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,24 +22,26 @@ fun EditScreen(
     navController: NavController,
     itemViewModel: ItemViewModel,
     onSetAppTitle: (String) -> Unit,
-    onShowFab: (Boolean) -> Unit
+    onShowFab: (Boolean) -> Unit,
+    onItemEdited: (Item) -> Unit,
 ) {
     LaunchedEffect(Unit) {
         onSetAppTitle("Edit Item")
         onShowFab(false)
     }
 
-    Log.d("EditScreen", "Item id: $itemId")
-
+    // gets an empty object initially, and gets the actual data after several recompositions
     val receivedItem: Item by itemViewModel.getItem(itemId!!.toInt())
         .observeAsState(Item(0, "", 0.0, 0))
 
-    Log.d("EditScreen", "receivedItem: $receivedItem")
-
+    // initially remembering the empty data
     var itemName by remember { mutableStateOf(receivedItem.itemName) }
     var itemPrice by remember { mutableStateOf(receivedItem.itemPrice.toString()) }
     var itemQuantity by remember { mutableStateOf(receivedItem.quantityInStock.toString()) }
 
+    // updating the values just once when the actual data arrives from the viewModel
+    // so that they are not overwritten over and over again
+    // and disables editing the TextFields.
     if (receivedItem.id != 0) {
         LaunchedEffect(Unit) {
             itemName = receivedItem.itemName
@@ -48,11 +49,6 @@ fun EditScreen(
             itemQuantity = receivedItem.quantityInStock.toString()
         }
     }
-
-    Log.d(
-        "EditScreen",
-        "Editing values: itemName - $itemName,  itemPrice - $itemPrice, itemQuantity - $itemQuantity"
-    )
 
     Column(
         modifier = Modifier
@@ -87,15 +83,20 @@ fun EditScreen(
                 .fillMaxWidth()
         )
 
+        // Save (Edits) Button
         Button(
             onClick = {
                 if (itemViewModel.isItemValid(itemName, itemPrice, itemQuantity)) {
-                    var updatedItem = receivedItem.copy(
+                    val updatedItem = receivedItem.copy(
                         itemName = itemName.trim(),
                         itemPrice = itemPrice.trim().toDouble(),
                         quantityInStock = itemQuantity.trim().toInt()
                     )
-                    itemViewModel.updateItem(updatedItem)
+
+                    // raise event to save the edits by the caller function
+                    onItemEdited(updatedItem)
+                    //itemViewModel.updateItem(updatedItem)
+
                     navController.navigate("home") {
                         popUpTo("home") { inclusive = true }
                     }
