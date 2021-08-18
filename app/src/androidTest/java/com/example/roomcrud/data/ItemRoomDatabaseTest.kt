@@ -1,11 +1,18 @@
 package com.example.roomcrud.data
 
+import android.content.Context
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.asLiveData
 import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
+import org.hamcrest.CoreMatchers.equalTo
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
@@ -18,7 +25,8 @@ class ItemRoomDatabaseTest {
 
     @Before
     fun createDb() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        //val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val context = ApplicationProvider.getApplicationContext<Context>()
 
         // Using an in-memory database because the information stored here disappears when the
         // process is killed.
@@ -36,16 +44,21 @@ class ItemRoomDatabaseTest {
         db.close()
     }
 
+    @get:Rule val instantExecutorRule = InstantTaskExecutorRule()
+    @ExperimentalCoroutinesApi
     @Test
     @Throws(Exception::class)
-    fun insertAndGetItem() {
-        runBlocking {
-            val item = Item(0, "Mango", 2.00, 8)
-            itemDao.insert(item)
+    fun insertAndGetItem() = runBlockingTest {
+        val boira = Item(0, "Boira", 0.35, 36)
+        val apple = Item(0, "Apple", 0.60, 50)
+        val mango = Item(0, "Mango", 2.10, 43)
 
-//            itemDao.getItem(0).collect { item ->
-//                assertEquals(item.itemName, "Mango")
-//            }
-        }
+        itemDao.insert(boira)
+        itemDao.insert(apple)
+        itemDao.insert(mango)
+
+        val receivedItem = itemDao.getAllItems().asLiveData()
+
+        assertThat(receivedItem.value?.size, equalTo(3))
     }
 }

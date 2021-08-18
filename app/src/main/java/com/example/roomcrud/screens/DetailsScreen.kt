@@ -1,5 +1,6 @@
 package com.example.roomcrud.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -13,6 +14,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,11 +37,14 @@ fun DetailsScreen(
         onShowFab(false)
     }
 
+    val context = LocalContext.current
+
     val receivedItem = itemViewModel.getItem(itemId!!.toInt()).observeAsState()
     val item = receivedItem.value ?: Item(0, "", 0.0, 0)
 
     var showSellForm by remember { mutableStateOf(false) }
-    var sellQuantity by remember { mutableStateOf("") }
+    var enteredQty by remember { mutableStateOf("") }
+    var sellErrorMessage by remember { mutableStateOf("") }
 
     val showDialog = remember { mutableStateOf(false) }
     val deleteConfirmed = remember { mutableStateOf(false) }
@@ -106,8 +111,8 @@ fun DetailsScreen(
         if (showSellForm) {
             Row(verticalAlignment = Alignment.Bottom) {
                 TextField(
-                    value = sellQuantity,
-                    onValueChange = { sellQuantity = it },
+                    value = enteredQty,
+                    onValueChange = { enteredQty = it },
                     label = { Text("Sell Quantity") },
                     modifier = Modifier
                         .weight(1f)
@@ -116,13 +121,40 @@ fun DetailsScreen(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number) // Numeric keyboard
                 )
 
-                Button(onClick = { showSellForm = false }) {
+                // Save the sell button
+                Button(onClick = {
+                    val sellQty = enteredQty.trim().toIntOrNull()
+
+                    if (sellQty != null && sellQty > 0 && sellQty <= item.quantityInStock) {
+                        val sellItem = item.copy(quantityInStock = item.quantityInStock - sellQty)
+                        itemViewModel.updateItem(sellItem)
+                        showSellForm = false
+                        enteredQty = ""
+                        sellErrorMessage = ""
+                        Toast.makeText(context, "Item(s) sold", Toast.LENGTH_SHORT).show()
+                    } else if (sellQty != null && sellQty > item.quantityInStock) {
+                        sellErrorMessage = "Not enough items in stock"
+                    } else {
+                        sellErrorMessage = "Enter a valid quantity to sell"
+                    }
+                }) {
                     Icon(
                         imageVector = Icons.Filled.Done,
                         contentDescription = "Sell Item",
                         tint = Color.White
                     )
                 }
+            }
+
+        }
+
+        // Show error message if any error on sell
+        if (sellErrorMessage != "") {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(sellErrorMessage, color = MaterialTheme.colors.error)
             }
         }
 
