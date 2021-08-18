@@ -43,3 +43,11 @@ implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
 // LiveData (Flow to LiveData: asLiveData)
 implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1"
 ```
+
+<br />
+
+| Item List | Edit Item |
+|:---: | :---:|
+|![list](https://user-images.githubusercontent.com/67064997/129905189-628faa43-df63-40f8-b9c1-37ff41d56356.png) | ![edit](https://user-images.githubusercontent.com/67064997/129905197-73cfdb03-dfdc-4c1c-9c19-4258a948595f.png)|
+| Add Item | Item Details |
+|![add](https://user-images.githubusercontent.com/67064997/129905201-ec2fe7a4-0d74-4770-b32f-ac238440cca1.png) | ![sell](https://user-images.githubusercontent.com/67064997/129905203-b3836041-6dbf-4b19-84e6-12ba31bd0f51.png)|
